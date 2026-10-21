@@ -72,6 +72,20 @@ if [ ! -f "$model_dir/publisher.json" ]; then
     exit 1
 fi
 
+# Arguments the model's catalog entry adds (server_args), as a JSON list.
+if [ -n "${SERVER_ARGS:-}" ]; then
+    if ! echo "$SERVER_ARGS" | jq -e 'type == "array" and all(type == "string")' >/dev/null; then
+        echo "SERVER_ARGS is not a JSON list of strings: $SERVER_ARGS" >&2
+        exit 1
+    fi
+fi
+set --
+while IFS= read -r arg; do
+    if [ -n "$arg" ]; then set -- "$@" "$arg"; fi
+done <<EOF_ARGS
+$(echo "${SERVER_ARGS:-[]}" | jq -r '.[]')
+EOF_ARGS
+
 echo "Serving $packages"
 # Flare records the approved publisher here; the approval is given again at
 # every start by the flags below.
@@ -85,4 +99,5 @@ exec flare run "$packages" \
     --host 0.0.0.0 \
     --port 8000 \
     --served-model-name "$MODEL_ID" \
-    --memory-limit "$VLLM_GPU_MEMORY_UTILIZATION"
+    --memory-limit "$VLLM_GPU_MEMORY_UTILIZATION" \
+    "$@"
