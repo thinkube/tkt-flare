@@ -50,5 +50,4 @@ Python; Flare loads the node's `libcuda.so.1`.
 ## Licence
 
 This template is MIT licensed. Flare and each model package have their own
-licences; a model's catalog entry states its licence and the attribution
-the licence requires.
+licences, stated in Flare's repository and in each model's card.
