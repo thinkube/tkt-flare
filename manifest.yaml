@@ -1,0 +1,14 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: MIT
+
+apiVersion: thinkube.io/v1
+kind: TemplateManifest
+metadata:
+  name: tkt-flare
+  title: Flare Inference Server
+  description: NVIDIA Flare local inference for Blackwell GPUs — model managed by LLM Gateway
+  version: 1.0.0
+  author: Alejandro Martínez Corriá
+  tags: ["ai", "llm", "flare", "inference", "text-generation", "gpu", "blackwell"]
+
+parameters: []

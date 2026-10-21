@@ -1,0 +1,44 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: MIT
+
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  # The application's version; the generated app starts at it.
+  version: "0.1.0"
+
+spec:
+  deployment:
+    type: component
+    name: flare
+    replicas: 0
+    # Pods are created per node by the LLM gateway when a model is loaded, so
+    # resting at zero replicas is idle rather than disabled.
+    gateway_managed: true
+
+  # The LLM gateway serves models on this component: one pod per model,
+  # copied from the inference container's Deployment. Flare runs only on
+  # Blackwell GPUs of compute capability 12.0 (RTX PRO 6000) and 12.1 (DGX
+  # Spark).
+  llm_backend:
+    type: flare
+    display_name: Flare
+    container: inference
+    driver: per-model-pod
+    tier: performance
+    gpu_compute_capabilities: ["12.0", "12.1"]
+
+  containers:
+    - name: inference
+      build: .
+      port: 8000
+      size: xlarge
+      gpu:
+        count: 1
+        memory: "80Gi"
+      health: /health
+      # Flare opens its port once the package is loaded; a package of about
+      # 100 GB read from Thinkube Storage takes more than the default 600s.
+      startupSeconds: 1800
+      test:
+        enabled: false
