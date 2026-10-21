@@ -27,6 +27,8 @@ spec:
     driver: per-model-pod
     tier: performance
     gpu_compute_capabilities: ["12.0", "12.1"]
+    # Flare answers /v1/messages itself; Anthropic requests reach it unchanged.
+    anthropic_messages: true
 
   containers:
     - name: inference
