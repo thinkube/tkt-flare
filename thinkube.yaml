@@ -39,8 +39,11 @@ spec:
         count: 1
         memory: "80Gi"
       health: /health
-      # Flare opens its port once the package is loaded; a package of about
-      # 100 GB read from Thinkube Storage takes more than the default 600s.
-      startupSeconds: 1800
+      # Flare opens its port once the package is loaded. The first start on a
+      # node copies a package of about 100 GB from Thinkube Storage first.
+      startupSeconds: 3600
+      # Flare reads a package's embedding tables row by row while it serves;
+      # it serves a copy on the node's local disk, not Thinkube Storage.
+      nodeCache: /var/cache/flare
       test:
         enabled: false
